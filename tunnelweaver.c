@@ -16,6 +16,8 @@
 #define MAX_X 320
 #define MAX_Y 240
 
+#define GREEN 0x27B3
+
 typedef short pixelbuffer[MAX_X][MAX_Y];
 
 typedef struct plane{
@@ -49,7 +51,7 @@ void planeInit(plane *p, plane *next) {
 }
 
 void writePixel(int x, int y, short colour){
-	volatile short *vga_addr=(volatile short*)(0x08000000 + (y<<10) + (x<<1);
+	volatile short *vga_addr=(volatile short*)(0x08000000 + (y<<10) + (x<<1));
 	*vga_addr=colour;
 }
 
@@ -69,9 +71,41 @@ void planesInit(plane **planes) {
 	*planes = prev;
 }
 
+void writeOnBuffer(int x, int y, short colour, pixelbuffer buffer) {
+	if (0<=x && x<MAX_X && 0<= y && y<MAX_Y) {
+		buffer[x][y] = colour;
+	}
+}
+
 //clear the buffer
 void clearBuffer(pixelbuffer buffer) {
 	pixelBufferInit(buffer);
+}
+
+void drawRectangle(int x, int y, int width, int height, int colour, pixelbuffer buffer) {
+	int i;
+	int ytop = y-(height/2);
+	int ybottom = y+(height/2);
+	int xleft = x-(width/2);
+	int xright = x+(width/2);
+	
+	for(i=ytop; i<=ybottom; i++) {
+		writeOnBuffer(xleft, i, colour, buffer);
+		writeOnBuffer(xright, i, colour, buffer);
+	}
+	for (i=xleft; i<=xright; i++) {
+		writeOnBuffer(i, ytop, colour, buffer);
+		writeOnBuffer(i, ybottom, colour, buffer);
+	}
+}
+
+void drawScaledPlane(plane *planes, pixelbuffer buffer, int depth) {
+	float scale = (NPLANES-(depth+1)) / NPLANES;
+	int width = planes->width * scale;
+	int height = planes->height * scale;
+	int x = planes->x * scale;
+	int y = planes->y * scale;
+	drawRectangle(x,y,width, height, GREEN+depth, buffer);
 }
 
 void drawPlanesToBuffer(plane *planes, pixelbuffer buffer) {
@@ -79,8 +113,26 @@ void drawPlanesToBuffer(plane *planes, pixelbuffer buffer) {
 
 	clearBuffer(buffer);
 	for (p=0; p<NPLANES; p++, planes=planes->next) {
-		drawScaledPlaneToBuffer(planes, buffer,p);
+		drawScaledPlane(planes, buffer,p);
 	}
+}
+
+
+void drawShip(spaceship *ship, pixelbuffer buffer) {
+	static short shipBitmap[5][5] = 
+	{
+		{0,0,0xF800,0,0},
+		{0,0xF800,0xF800,0xF800,0},
+		{0,0xF800,0xF800,0xF800,0},
+		{0xF800,0xF800,0xF800,0xF800,0xF800},
+		{0,0xF800,0xF800,0xF800,0}
+	};
+	int x,y;
+	for (x=0; x<5; x++){
+	for (y=0; y<5; y++){
+		writeOnBuffer((ship->x)+x-2 ,(ship->y)+y-2, shipBitmap[x][y], buffer);
+	}}
+	
 }
 
 //write the buffer to the screen
@@ -91,7 +143,6 @@ void writeBufferToScreen(pixelbuffer buffer){
 		writePixel(x,y,buffer[x][y]);
 	}}
 }
-
 
 /*
  extern void TimerHandler(){
@@ -112,6 +163,7 @@ int main(){
 
 	// timerInit();
 	while(1){
+		delay(40);
 		//get information from accelerometer
 	}
 	return 0;
