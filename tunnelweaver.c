@@ -103,8 +103,8 @@ void drawScaledPlane(plane *planes, pixelbuffer buffer, int depth) {
 	float scale = (NPLANES-(depth+1)) / NPLANES;
 	int width = planes->width * scale;
 	int height = planes->height * scale;
-	int x = planes->x * scale;
-	int y = planes->y * scale;
+	int x = planes->x;
+	int y = planes->y;
 	drawRectangle(x,y,width, height, GREEN+depth, buffer);
 }
 
