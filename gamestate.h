@@ -9,10 +9,7 @@
 
 #define GREEN 0x27B3
 
-
-typedef short pixelbuffer[MAX_X][MAX_Y];
-
-typedef struct plane{
+typedef struct{
 	int width;
 	int height;
 	int x;
@@ -25,9 +22,15 @@ typedef struct{
 } spaceship;
 
 typedef struct{
+	int x;
+	int y;
+} asteroid;
+
+typedef struct{
 	plane planes[NPLANES];
 	int farthestIndex;
 	spaceship ship;
+	asteroid ast;
 } gamestate;
 
 
@@ -35,7 +38,6 @@ void initGamestate(gamestate *gs);
 
 void updateGamestate(gamestate *gs);
 
-void drawGamestate(gamestate *gs, pixelbuffer buffer);
 
 
 #endif

@@ -1,5 +1,5 @@
 #include "gamestate.h"
-#include <stdlib.h>
+//#include <stdlib.h>
 
 void initGamestate(gamestate *gs) {
 	int i;
@@ -16,6 +16,8 @@ void initGamestate(gamestate *gs) {
 
 	gs->ship.x = MAX_X/2;
 	gs->ship.y = MAX_Y*3/4;
+	gs->ast.x =0;
+	gs->ast.y=0;
 }
 
 void updateGamestate(gamestate *gs) {
@@ -37,18 +39,4 @@ void updateGamestate(gamestate *gs) {
 		p->height+=3;
 	}
 }
-
-
-void drawGamestate(gamestate *gs, pixelbuffer buffer) {
-	/* Need to draw from the farthest frame, to give the effect of depth */
-	int i;
-
-	clearBuffer(buffer);
-	for (i=0; i<NPLANES; i++) {
-		int x = (i+gs->farthestIndex)%NPLANES;
-		plane *p = &(gs->planes[x]);
-		drawRectangle(p->x,p->y,p->width,p->height,GREEN+i*4,buffer);
-	}
-}
-
 
