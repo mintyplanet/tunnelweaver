@@ -2,29 +2,8 @@
  *A program that draws the pixels onto the screen of the game. The program will increase the size of each box in the screen by SizeIncreaseX and SizeIncreaseY when called.
  * The program will resize the box to MINX AND MINY, when X, Y of the box reaches MAXX and MAXY.
  */
+#include "gamestate.h"
 
-#include <stdlib.h>
-
-#define NPLANES 10
-#define MAX_X 320
-#define MAX_Y 240
-
-#define GREEN 0x27B3
-
-typedef short pixelbuffer[MAX_X][MAX_Y];
-
-typedef struct plane{
-	int width;
-	int height;
-	int x;
-	int y;
-	struct plane *next;
-} plane;
-
-typedef struct{
-	int x;
-	int y;
-} spaceship;
 
 //creates the inital array of squares
 void pixelBufferInit(pixelbuffer buffer){
@@ -35,13 +14,6 @@ void pixelBufferInit(pixelbuffer buffer){
 		}
 	}
 }
-void planeInit(plane *p, plane *next) {
-	p->width = 300;
-	p->height = 220;
-	p->x = 160;
-	p->y = 120;
-	p->next = next;
-}
 
 void writePixel(int x, int y, short colour){
 	volatile short *vga_addr=(volatile short*)(0x08000000 + (y<<10) + (x<<1));
@@ -49,20 +21,7 @@ void writePixel(int x, int y, short colour){
 }
 
 
-/*Create a circular linked list of planes */
-void planesInit(plane **planes) {
-	int p;
-	plane *last = malloc(sizeof(plane));
-	plane *prev, *next = last;
 
-	for (p=1; p<NPLANES; p++) {
-		prev = malloc(sizeof(plane));
-		planeInit(prev, next);
-		next = prev;
-	}
-	planeInit(last, prev);
-	*planes = prev;
-}
 
 void writeOnBuffer(int x, int y, short colour, pixelbuffer buffer) {
 	if (0<=x && x<MAX_X && 0<= y && y<MAX_Y) {
@@ -89,23 +48,6 @@ void drawRectangle(int x, int y, int width, int height, int colour, pixelbuffer 
 	for (i=xleft; i<=xright; i++) {
 		writeOnBuffer(i, ytop, colour, buffer);
 		writeOnBuffer(i, ybottom, colour, buffer);
-	}
-}
-
-void drawScaledPlane(plane *planes, pixelbuffer buffer, int depth) {
-	int width = planes->width * (NPLANES-(depth+1)) / NPLANES;
-	int height = planes->height * (NPLANES-(depth+1)) / NPLANES;
-	int x = planes->x;
-	int y = planes->y;
-	drawRectangle(x,y,width, height, GREEN+depth, buffer);
-}
-
-void drawPlanesToBuffer(plane *planes, pixelbuffer buffer) {
-	int p;
-
-	clearBuffer(buffer);
-	for (p=0; p<NPLANES; p++, planes=planes->next) {
-		drawScaledPlane(planes, buffer,p);
 	}
 }
 
@@ -147,12 +89,7 @@ void writeBufferToScreen(pixelbuffer buffer){
 		writePixel(x,y,buffer[x][y]);
 	}}
 }
-void updatePlane(plane **planes) {
-	(*planes)->width=rand()%300;
-	(*planes)->height=rand()%220;
-	*planes = (*planes)->next;
 
-}
 /*
  extern void TimerHandler(){
 	adjustSize();
@@ -161,30 +98,24 @@ void updatePlane(plane **planes) {
 	writeBufferToScreen(); 
 }
 */
+
 int main(){
 	 
-	plane *planes;
 	pixelbuffer buffer;
-	spaceship ship = {MAX_X/2, MAX_Y*3/4};
+	gamestate gs;
 
 	pixelBufferInit(buffer);
-	planesInit(&planes);
+	initGamestate(&gs);
 
 	// timerInit();
 	while(1){
 		//delay(40);
-		drawPlanesToBuffer(planes, buffer);
-		/*
-		int depth;
-		for (depth=0; depth<8; depth++) {
-			
-			drawRectangle(160,120,depth*40, depth*30, GREEN+depth*4, buffer);
-		}
-		*/
-		drawShip(&ship, buffer);
+
+		drawGamestate(&gs, buffer);
+		drawShip(&gs.ship, buffer);
 		writeBufferToScreen(buffer);
 		//get information from accelerometer
-		
+		updateGamestate(&gs);
 		
 	}
 	return 0;
