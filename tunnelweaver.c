@@ -4,13 +4,6 @@
  */
 
 #include <stdlib.h>
- 
- #define MINY 20
- #define MINX 10
- #define MAXY 240
- #define MAXX 360
- #define SizeIncreaseX 10 
- #define SizeIncreaseY 10
 
 #define NPLANES 10
 #define MAX_X 320
@@ -43,8 +36,8 @@ void pixelBufferInit(pixelbuffer buffer){
 	}
 }
 void planeInit(plane *p, plane *next) {
-	p->width = 100;
-	p->height = 60;
+	p->width = 300;
+	p->height = 220;
 	p->x = 160;
 	p->y = 120;
 	p->next = next;
@@ -100,9 +93,8 @@ void drawRectangle(int x, int y, int width, int height, int colour, pixelbuffer 
 }
 
 void drawScaledPlane(plane *planes, pixelbuffer buffer, int depth) {
-	float scale = (NPLANES-(depth+1)) / NPLANES;
-	int width = planes->width * scale;
-	int height = planes->height * scale;
+	int width = planes->width * (NPLANES-(depth+1)) / NPLANES;
+	int height = planes->height * (NPLANES-(depth+1)) / NPLANES;
 	int x = planes->x;
 	int y = planes->y;
 	drawRectangle(x,y,width, height, GREEN+depth, buffer);
@@ -180,13 +172,15 @@ int main(){
 
 	// timerInit();
 	while(1){
-		delay(40);
-		//drawPlanesToBuffer(planes, buffer);
+		//delay(40);
+		drawPlanesToBuffer(planes, buffer);
+		/*
 		int depth;
 		for (depth=0; depth<8; depth++) {
 			
 			drawRectangle(160,120,depth*40, depth*30, GREEN+depth*4, buffer);
 		}
+		*/
 		drawShip(&ship, buffer);
 		writeBufferToScreen(buffer);
 		//get information from accelerometer
