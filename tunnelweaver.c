@@ -4,6 +4,7 @@
  */
 #include "gamestate.h"
 #include "render.h"
+#include "control.h"
 
 int main(){
 	pixelbuffer buffer;
@@ -31,8 +32,9 @@ return;
 		//delay(40);
 
 		drawGamestate(&gs, buffer);
-
-		//drawCircle(200,60,8,GREEN,buffer);
+		if( isKeyPressed(1)) gs.ship.x++;
+		if( isKeyPressed(3)) gs.ship.x--;
+		//drawCircle(200,60,12,GREEN,buffer);
 		writeBufferToScreen(buffer);
 		//get information from accelerometer
 		updateGamestate(&gs);
