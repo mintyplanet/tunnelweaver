@@ -108,6 +108,7 @@ void drawGamestate(gamestate *gs, pixelbuffer buffer) {
 		int x = (i+gs->farthestIndex)%NPLANES;
 		plane *p = &(gs->planes[x]);
 		drawRectangle(p->x,p->y,p->width,p->height,GREEN+i*4,buffer);
+		drawCircle(p->ast->x, p->ast->y, p->ast->r, ASTEROID_COLOUR, buffer);
 	}
 	drawShip(&(gs->ship), buffer);
 }

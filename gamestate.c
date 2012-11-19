@@ -6,6 +6,16 @@ void initGamestate(gamestate *gs) {
 	//gs->planes = (plane*)malloc(NPLANES*sizeof(plane));
 	for (i=0; i<NPLANES; i++) {
 		plane *p = &(gs->planes[i]);
+		// only draw asteroid on the furthest plane, set others to 0.
+		if(i == 0){
+			int Xdisplace = rand() % 20;
+			int Ydisplace = rand() % 12;
+			p->ast->r = 1;
+			p->ast->x = MAX_X/2- 10 + Xdisplace;
+			p->ast->y = MAX_Y/2- 6 + Ydisplace;
+		}else {
+			p->ast->r = 0;
+		}
 
 		p->x = MAX_X/2;
 		p->y = MAX_Y/2;
@@ -16,8 +26,6 @@ void initGamestate(gamestate *gs) {
 
 	gs->ship.x = MAX_X/2;
 	gs->ship.y = MAX_Y*3/4;
-	gs->ast.x =0;
-	gs->ast.y=0;
 }
 
 void updateGamestate(gamestate *gs) {
@@ -30,10 +38,22 @@ void updateGamestate(gamestate *gs) {
 		//Resize it and reassign it as the farthest plane
 		closest->width = 20;
 		closest->height = 12;
+		// randomize position of asteroid
+		int Xdisplace = rand() % 20;
+		int Ydisplace = rand() % 12;
+		p->ast->r = 1;
+		p->ast->x = MAX_X/2- 10 + Xdisplace;
+		p->ast->y = MAX_Y/2- 6 + Ydisplace;
 		gs->farthestIndex=closestIndex;
 	}
 	for (i=0; i<NPLANES; i++) {
 		plane *p = &(gs->planes[i]);
+		//if no asteroid, do not increase radius, else increase the asteroid size and shift asteroid.
+		if (p->ast->r != 0){
+			p->ast->r += 2;
+			p->ast->x = (p->ast->x - MAX_X/2) * AST_RATIO_X + MAX_X/2;
+			p->ast->y = (p->ast->y - MAX_Y/2) * AST_RATIO_Y + MAX_Y/2;
+		}
 
 		p->width+=3;
 		p->height+=3;

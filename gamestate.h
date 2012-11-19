@@ -6,14 +6,17 @@
 #define MAX_Y 240
 #define MAX_WIDTH 300
 #define MAX_HEIGHT 220
-
+#define Asteroid 0x09F1
 #define GREEN 0x27B3
+#define AST_RATIO_X 2
+#define AST_RATIO_Y 1.5
 
 typedef struct{
 	int width;
 	int height;
 	int x;
 	int y;
+	asteroid ast;
 } plane;
 
 typedef struct{
@@ -24,13 +27,13 @@ typedef struct{
 typedef struct{
 	int x;
 	int y;
+	int r;
 } asteroid;
 
 typedef struct{
 	plane planes[NPLANES];
 	int farthestIndex;
 	spaceship ship;
-	asteroid ast;
 } gamestate;
 
 
