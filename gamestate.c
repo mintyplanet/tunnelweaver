@@ -10,11 +10,11 @@ void initGamestate(gamestate *gs) {
 		if(i == 0){
 			int Xdisplace = rand() % 20;
 			int Ydisplace = rand() % 12;
-			p->ast->r = 1;
-			p->ast->x = MAX_X/2- 10 + Xdisplace;
-			p->ast->y = MAX_Y/2- 6 + Ydisplace;
+			p->ast.r = 1;
+			p->ast.x = MAX_X/2- 10 + Xdisplace;
+			p->ast.y = MAX_Y/2- 6 + Ydisplace;
 		}else {
-			p->ast->r = 0;
+			p->ast.r = 0;
 		}
 
 		p->x = MAX_X/2;
@@ -30,6 +30,8 @@ void initGamestate(gamestate *gs) {
 
 void updateGamestate(gamestate *gs) {
 	int i;
+	static x = 0;
+	x++;
 	int closestIndex = (NPLANES+gs->farthestIndex-1)%NPLANES;
 	plane *closest = &(gs->planes[closestIndex]);
 	if ((closest->width > MAX_WIDTH) ||
@@ -41,22 +43,33 @@ void updateGamestate(gamestate *gs) {
 		// randomize position of asteroid
 		int Xdisplace = rand() % 20;
 		int Ydisplace = rand() % 12;
-		p->ast->r = 1;
-		p->ast->x = MAX_X/2- 10 + Xdisplace;
-		p->ast->y = MAX_Y/2- 6 + Ydisplace;
+		closest->ast.r = 1;
+		closest->ast.x = MAX_X/2- 10 + Xdisplace;
+		closest->ast.y = MAX_Y/2- 6 + Ydisplace;
 		gs->farthestIndex=closestIndex;
 	}
 	for (i=0; i<NPLANES; i++) {
 		plane *p = &(gs->planes[i]);
 		//if no asteroid, do not increase radius, else increase the asteroid size and shift asteroid.
-		if (p->ast->r != 0){
-			p->ast->r += 2;
-			p->ast->x = (p->ast->x - MAX_X/2) * AST_RATIO_X + MAX_X/2;
-			p->ast->y = (p->ast->y - MAX_Y/2) * AST_RATIO_Y + MAX_Y/2;
+		if (p->ast.r != 0){
+		
+			if (x % 3 == 0){
+				p->ast.r += 1;
+			}
+
+			if (p->ast.x - MAX_X/2 < 0){
+				p->ast.x -= rand() % 3;//AST_RATIO_X;	
+			} else{
+				p->ast.x += rand() % 3;//AST_RATIO_X;
+			}
+			if (p->ast.y - MAX_Y/2 < 0){
+				p->ast.y -= rand() % 3;//AST_RATIO_Y;	
+			} else{
+				p->ast.y += rand() % 3;//AST_RATIO_Y;
+			}
 		}
 
-		p->width+=3;
+		p->width+=4;
 		p->height+=3;
 	}
 }
-

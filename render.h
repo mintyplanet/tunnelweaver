@@ -18,7 +18,7 @@ void clearBuffer(pixelbuffer buffer);
 
 void drawRectangle(int x, int y, int width, int height, short colour, pixelbuffer buffer);
 
-void drawCircle(int x, int y, int r, short colour, pixelbuffer buffer);
+void drawCircle(int y, int x, int r, short colour, pixelbuffer buffer);
 
 //write the buffer to the screen
 void writeBufferToScreen(pixelbuffer buffer);

@@ -6,10 +6,17 @@
 #define MAX_Y 240
 #define MAX_WIDTH 300
 #define MAX_HEIGHT 220
-#define Asteroid 0x09F1
+#define ASTEROID_COLOUR 0x09F1
 #define GREEN 0x27B3
-#define AST_RATIO_X 2
-#define AST_RATIO_Y 1.5
+#define AST_RATIO_X 1
+#define AST_RATIO_Y 1
+//1.5
+
+typedef struct{
+	int x;
+	int y;
+	int r;
+} asteroid;
 
 typedef struct{
 	int width;
@@ -23,12 +30,6 @@ typedef struct{
 	int x;
 	int y;
 } spaceship;
-
-typedef struct{
-	int x;
-	int y;
-	int r;
-} asteroid;
 
 typedef struct{
 	plane planes[NPLANES];

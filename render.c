@@ -45,7 +45,7 @@ void drawRectangle(int x, int y, int width, int height, short colour, pixelbuffe
 	}
 }
 
-void drawCircle(int x, int y, int r, short colour, pixelbuffer buffer) {
+void drawCircle(int y, int x, int r, short colour, pixelbuffer buffer) {
 	int ytop = y-(r/2);
 	int xleft = x-(r/2);
 	int i,j, r2=r*r;
@@ -108,7 +108,7 @@ void drawGamestate(gamestate *gs, pixelbuffer buffer) {
 		int x = (i+gs->farthestIndex)%NPLANES;
 		plane *p = &(gs->planes[x]);
 		drawRectangle(p->x,p->y,p->width,p->height,GREEN+i*4,buffer);
-		drawCircle(p->ast->x, p->ast->y, p->ast->r, ASTEROID_COLOUR, buffer);
+		drawCircle(p->ast.x, p->ast.y, p->ast.r, ASTEROID_COLOUR, buffer);
 	}
 	drawShip(&(gs->ship), buffer);
 }
