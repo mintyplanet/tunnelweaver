@@ -1,6 +1,6 @@
 #include "gamestate.h"
 //#include <stdlib.h>
-
+#define SQUARED(x) ((x)*(x))
 void initGamestate(gamestate *gs) {
 	int i;
 	//gs->planes = (plane*)malloc(NPLANES*sizeof(plane));
@@ -26,6 +26,16 @@ void initGamestate(gamestate *gs) {
 
 	gs->ship.x = MAX_X/2;
 	gs->ship.y = MAX_Y*3/4;
+}
+
+int detectCollision(gamestate *gs) {
+	int closestIndex = (NPLANES+gs->farthestIndex-1)%NPLANES;
+	plane *closest = &(gs->planes[closestIndex]);
+	asteroid *ast = &(closest->ast);
+	spaceship *ship = &(gs->ship);
+	return (SQUARED(ship->x-ast->x)+SQUARED(ship->y-ast->y)) < SQUARED(ast->r+7);
+	
+		
 }
 
 void updateGamestate(gamestate *gs) {

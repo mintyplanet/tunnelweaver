@@ -9,7 +9,7 @@ typedef short pixelbuffer[MAX_X][MAX_Y];
 //creates the inital array of squares
 void pixelBufferInit(pixelbuffer buffer);
 
-void writePixel(int x, int y, short colour);
+void inline writePixel(int x, int y, short colour);
 
 void writeOnBuffer(int x, int y, short colour, pixelbuffer buffer);
 

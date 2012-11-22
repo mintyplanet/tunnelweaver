@@ -6,7 +6,7 @@
 #define MAX_Y 240
 #define MAX_WIDTH 300
 #define MAX_HEIGHT 220
-#define ASTEROID_COLOUR 0x09F1
+#define ASTEROID_COLOUR 0xF906
 #define GREEN 0x27B3
 #define AST_RATIO_X 1
 #define AST_RATIO_Y 1

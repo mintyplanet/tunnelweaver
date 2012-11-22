@@ -28,15 +28,15 @@ return;
 */
 
 	// timerInit();
-	while(1){
+	while(!detectCollision(&gs)){
 		//delay(40);
 
 		drawGamestate(&gs, buffer);
-		if( isKeyPressed(1)) gs.ship.x++;
-		if( isKeyPressed(3)) gs.ship.x--;
 		//drawCircle(200,60,12,GREEN,buffer);
 		writeBufferToScreen(buffer);
 		//get information from accelerometer
+		if( isKeyPressed(1)) gs.ship.x++;
+		if( isKeyPressed(3)) gs.ship.x--;
 		updateGamestate(&gs);
 		
 	}

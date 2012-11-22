@@ -11,7 +11,7 @@ void pixelBufferInit(pixelbuffer buffer){
 	}
 }
 
-void writePixel(int x, int y, short colour){
+void inline writePixel(int x, int y, short colour){
 	volatile short *vga_addr=(volatile short*)(0x08000000 + (y<<10) + (x<<1));
 	*vga_addr=colour;
 }
@@ -52,9 +52,14 @@ void drawCircle(int y, int x, int r, short colour, pixelbuffer buffer) {
 
 	for(i=0;i<=2*r;i++){
 		for(j=0;j<=2*r;j++){
-			if ((i-r)*(i-r)+(j-r)*(j-r)<=r2) {
+		int circle = (i-r)*(i-r)+(j-r)*(j-r);
+			if (circle<r2) {
 				writeOnBuffer(ytop+i,xleft+j,colour,buffer);
 			}
+			if (((circle-r2)<(4+r/2)) && ((circle-r2)>-(4+r/2))) {
+				writeOnBuffer(ytop+i,xleft+j,0xFFFF,buffer);
+			}
+			
 		}
 	}
 }
@@ -81,21 +86,22 @@ void drawShip(spaceship *ship, pixelbuffer buffer) {
 	};
 	int x,y;
 	for (x=0; x<SHIPSIZE; x++){
-	for (y=0; y<SHIPSIZE; y++){
-		if (shipBitmap[y][x]) {
-			writeOnBuffer((ship->x)+x-(SHIPSIZE/2) ,(ship->y)+y-(SHIPSIZE/2), shipBitmap[y][x], buffer);
+		for (y=0; y<SHIPSIZE; y++){
+			if (shipBitmap[y][x]) {
+				writeOnBuffer((ship->x)+x-(SHIPSIZE/2) ,(ship->y)+y-(SHIPSIZE/2), shipBitmap[y][x], buffer);
+			}
 		}
-	}}
-	
+	}
 }
 
 //write the buffer to the screen
 void writeBufferToScreen(pixelbuffer buffer){
 	int x,y;
 	for (y=0; y<MAX_Y; y++){
-	for (x=0; x<MAX_X; x++){
-		writePixel(x,y,buffer[x][y]);
-	}}
+		for (x=0; x<MAX_X; x++){
+			writePixel(x,y,buffer[x][y]);
+		}
+	}
 }
 
 
@@ -108,7 +114,7 @@ void drawGamestate(gamestate *gs, pixelbuffer buffer) {
 		int x = (i+gs->farthestIndex)%NPLANES;
 		plane *p = &(gs->planes[x]);
 		drawRectangle(p->x,p->y,p->width,p->height,GREEN+i*4,buffer);
-		drawCircle(p->ast.x, p->ast.y, p->ast.r, ASTEROID_COLOUR, buffer);
+		drawCircle(p->ast.x, p->ast.y, p->ast.r, ASTEROID_COLOUR-i*2, buffer);
 	}
 	drawShip(&(gs->ship), buffer);
 }
