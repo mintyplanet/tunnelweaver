@@ -32,6 +32,7 @@
 
 #ifndef I2C_H_
 #define I2C_H_
+#include "terasic_includes.h"
 
 //////////////////////////////////////////////////////////////////////
 #define A_GND	(1<<0)
@@ -40,27 +41,32 @@
 #define A_SDA	(1<<5)
 #define A_SCL	(1<<7)
 
-#define JP1_ADDR ((volatile char *) 0x10000060)
-#define SET_DIRECTION(bits) (*(JP1_ADDR+4)=(bits))
-#define SET_BIT(bit) ((*JP1_ADDR) |= (bit))
-#define CLEAR_BIT(bit) ((*JP1_ADDR) &= ~(bit))
+#define JP2_ADDR ((volatile char *) 0x10000070)
+#define INIT_I2C() (*(JP2_ADDR)=(INIT))
+#define SET_DIRECTION(bits) (*(JP2_ADDR+4)=(bits))
+#define SET_BIT(bit) ((*JP2_ADDR) |= (bit))
+#define CLEAR_BIT(bit) ((*JP2_ADDR) &= ~(bit))
 //0xAB
 #define OUTMODE	(A_GND|A_VCC|A_CS|A_SDA|A_SCL)
 // 0x8B
 #define INMODE	(A_GND|A_VCC|A_CS|A_SCL)
 
+#define INIT (A_VCC|A_CS|A_SDA|A_SCL)
+
 #define SDA_DIR_IN(data_base)	SET_DIRECTION(INMODE)
 #define SDA_DIR_OUT(data_base) 	SET_DIRECTION(OUTMODE) 
 #define SDA_HIGH(data_base)		SET_BIT(A_SDA)
 #define SDA_LOW(data_base)		CLEAR_BIT(A_SDA)
-#define SDA_READ(data_base)		READ_BIT
+#define SDA_READ(data_base)		((*JP2_ADDR)&A_SDA)
 #define SCL_HIGH(clk_base)		SET_BIT(A_SCL)
 #define SCL_LOW(clk_base)		CLEAR_BIT(A_SCL)
 
-//////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////
 
-bool I2C_Write(alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 ControlAddr, alt_u8 ControlData);
-bool I2C_Read(alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 ControlAddr, alt_u8 *pControlData);
-bool I2C_MultipleRead(alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 szData[], alt_u16 len);
+void JP2_init();
+
+bool I2C_Write (alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 ControlAddr, alt_u8 ControlData);
+bool I2C_Read (alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 ControlAddr, alt_u8 *pControlData);
+bool I2C_MultipleRead (alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 szData[], alt_u16 len);
 
 #endif /*I2C_H_*/

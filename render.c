@@ -57,7 +57,7 @@ void drawCircle(int y, int x, int r, short colour, pixelbuffer buffer) {
 				writeOnBuffer(ytop+i,xleft+j,colour,buffer);
 			}
 			if (((circle-r2)<(4+r/2)) && ((circle-r2)>-(4+r/2))) {
-				writeOnBuffer(ytop+i,xleft+j,0xFFFF,buffer);
+				writeOnBuffer(ytop+i,xleft+j,ASTEROID_EDGE_COLOUR,buffer);
 			}
 			
 		}
@@ -97,7 +97,9 @@ void drawShip(spaceship *ship, pixelbuffer buffer) {
 //write the buffer to the screen
 void writeBufferToScreen(pixelbuffer buffer){
 	int x,y;
-	for (y=0; y<MAX_Y; y++){
+	static int even=0;
+	
+	for (y=even++%2; y<MAX_Y; y+=2){
 		for (x=0; x<MAX_X; x++){
 			writePixel(x,y,buffer[x][y]);
 		}
@@ -114,7 +116,7 @@ void drawGamestate(gamestate *gs, pixelbuffer buffer) {
 		int x = (i+gs->farthestIndex)%NPLANES;
 		plane *p = &(gs->planes[x]);
 		drawRectangle(p->x,p->y,p->width,p->height,GREEN+i*4,buffer);
-		drawCircle(p->ast.x, p->ast.y, p->ast.r, ASTEROID_COLOUR-i*2, buffer);
+		drawCircle(p->ast.x, p->ast.y, p->ast.r, ASTEROID_COLOUR-i, buffer);
 	}
 	drawShip(&(gs->ship), buffer);
 }

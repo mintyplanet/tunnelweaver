@@ -5,6 +5,7 @@
 #include "gamestate.h"
 #include "render.h"
 #include "control.h"
+#include "ADXL345.h"
 
 int main(){
 	pixelbuffer buffer;
@@ -13,21 +14,26 @@ int main(){
 	pixelBufferInit(buffer);
 	initGamestate(&gs);
 
-/*
-		writeBufferToScreen(buffer);
-		#define OFFSET 10
-writePixel(OFFSET, OFFSET, GREEN);
-writePixel(160, OFFSET, GREEN);
-writePixel(319-OFFSET, OFFSET, GREEN);
-writePixel(OFFSET, 120, GREEN);
-writePixel(OFFSET, 239-OFFSET, GREEN);
-writePixel(160, 239-OFFSET, GREEN);
-writePixel(319-OFFSET, 120, GREEN);
-writePixel(319-OFFSET, 239-OFFSET, GREEN);
-return;
-*/
 
-	// timerInit();
+JP2_init();
+int i;
+for (i=0;i<128;i++){
+	 if (I2C_Write(0,0, i, 0, 0)) {
+	 	//break;
+	 	printf("I2C 0x%X success?\n",i);	
+	 }
+	 //printf("fail\n");
+}
+printf("Done\n");return 0;
+////////////////////////
+	writeBufferToScreen(buffer);
+	if(!ADXL345_init()){
+		drawCircle(MAX_Y/2, MAX_X/2, 50, 0x1234, buffer);
+		writeBufferToScreen(buffer);
+		return 0;
+	}
+//////////////
+
 	while(!detectCollision(&gs)){
 		//delay(40);
 
@@ -39,6 +45,8 @@ return;
 		if( isKeyPressed(3)) gs.ship.x--;
 		updateGamestate(&gs);
 		
+
+
 	}
 	return 0;
  }

@@ -29,12 +29,17 @@
 //                     email: support@terasic.com
 //
 // --------------------------------------------------------------------
+
 #include "terasic_includes.h"
-#include "I2C.h"
+#include "i2c.h"
+#include "timer.h"
+
 
 // Note. Remember to reset device befroe acceess I2C interface
+#define DEBUG_I2C
 #ifdef DEBUG_I2C
-    #define I2C_DEBUG(x)    DEBUG(x)  
+    #include <stdio.h>
+    #define I2C_DEBUG(x)    printf(x) 
 #else
     #define I2C_DEBUG(x)
 #endif
@@ -46,14 +51,6 @@
 //void dump_message(char *pMessage);
 //#define DEBUG_DUMP dump_message
 
-#define SDA_DIR_IN(data_base)   IOWR_ALTERA_AVALON_PIO_DIRECTION(data_base,0)
-#define SDA_DIR_OUT(data_base)  IOWR_ALTERA_AVALON_PIO_DIRECTION(data_base,1) 
-#define SDA_HIGH(data_base)     IOWR_ALTERA_AVALON_PIO_DATA(data_base, 1)
-#define SDA_LOW(data_base)      IOWR_ALTERA_AVALON_PIO_DATA(data_base, 0)
-#define SDA_READ(data_base)     IORD_ALTERA_AVALON_PIO_DATA(data_base)
-#define SCL_HIGH(clk_base)     IOWR_ALTERA_AVALON_PIO_DATA(clk_base, 1)
-#define SCL_LOW(clk_base)      IOWR_ALTERA_AVALON_PIO_DATA(clk_base, 0)
-
 #define SCL_DELAY    usleep(1)
 
 
@@ -63,6 +60,10 @@ bool i2c_write(alt_u32 clk_base, alt_u32 data_base, alt_u8 Data);
 void i2c_read(alt_u32 clk_base, alt_u32 data_base, alt_u8 *pData, bool bAck);
 
 
+void JP2_init(){
+    SET_DIRECTION(OUTMODE);
+    INIT_I2C();
+}
 
 bool I2C_Write(alt_u32 clk_base, alt_u32 data_base, alt_8 DeviceAddr, alt_u8 ControlAddr, alt_u8 ControlData){
     bool bSuccess = TRUE;

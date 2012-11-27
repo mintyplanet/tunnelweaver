@@ -14,7 +14,7 @@ void initGamestate(gamestate *gs) {
 			p->ast.x = MAX_X/2- 10 + Xdisplace;
 			p->ast.y = MAX_Y/2- 6 + Ydisplace;
 		}else {
-			p->ast.r = 0;
+			p->ast.r = -1;
 		}
 
 		p->x = MAX_X/2;
@@ -30,12 +30,19 @@ void initGamestate(gamestate *gs) {
 
 int detectCollision(gamestate *gs) {
 	int closestIndex = (NPLANES+gs->farthestIndex-1)%NPLANES;
-	plane *closest = &(gs->planes[closestIndex]);
-	asteroid *ast = &(closest->ast);
-	spaceship *ship = &(gs->ship);
-	return (SQUARED(ship->x-ast->x)+SQUARED(ship->y-ast->y)) < SQUARED(ast->r+7);
-	
-		
+	int hit = 0;
+	int i;
+
+	for(i=0; i<3; i++){
+		plane *p = &(gs->planes[closestIndex - i % 10]);
+		asteroid *ast = &(p->ast);
+		spaceship *ship = &(gs->ship);
+		if (ast->r==-1){
+		}else if ((SQUARED(ship->x-ast->x)+SQUARED(ship->y-ast->y)) < SQUARED(ast->r+7)){
+			hit = 1;
+		}	
+	}
+	return hit;
 }
 
 void updateGamestate(gamestate *gs) {
@@ -61,7 +68,7 @@ void updateGamestate(gamestate *gs) {
 	for (i=0; i<NPLANES; i++) {
 		plane *p = &(gs->planes[i]);
 		//if no asteroid, do not increase radius, else increase the asteroid size and shift asteroid.
-		if (p->ast.r != 0){
+		if (p->ast.r != -1){
 		
 			if (x % 3 == 0){
 				p->ast.r += 1;
