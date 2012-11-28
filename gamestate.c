@@ -8,19 +8,21 @@ void initGamestate(gamestate *gs) {
 		plane *p = &(gs->planes[i]);
 		// only draw asteroid on the furthest plane, set others to 0.
 		if(i == 0){
+			
 			int Xdisplace = rand() % 20;
 			int Ydisplace = rand() % 12;
 			p->ast.r = 1;
 			p->ast.x = MAX_X/2- 10 + Xdisplace;
 			p->ast.y = MAX_Y/2- 6 + Ydisplace;
+			
 		}else {
 			p->ast.r = -1;
 		}
-
 		p->x = MAX_X/2;
 		p->y = MAX_Y/2;
 		p->width = 30*i+20; //20-290
 		p->height = 18*i+12; //12-174
+	
 	}
 	gs->farthestIndex = 0;
 
@@ -34,7 +36,7 @@ int detectCollision(gamestate *gs) {
 	int i;
 
 	for(i=0; i<3; i++){
-		plane *p = &(gs->planes[closestIndex - i % 10]);
+		plane *p = &(gs->planes[(closestIndex - i) % 10]);
 		asteroid *ast = &(p->ast);
 		spaceship *ship = &(gs->ship);
 		if (ast->r==-1){

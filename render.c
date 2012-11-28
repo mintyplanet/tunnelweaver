@@ -1,5 +1,6 @@
 #include "render.h"
 #include "gamestate.h"
+#include "control.h"
 
 //creates the inital array of squares
 void pixelBufferInit(pixelbuffer buffer){
@@ -95,11 +96,12 @@ void drawShip(spaceship *ship, pixelbuffer buffer) {
 }
 
 //write the buffer to the screen
+#define SKIP 2
 void writeBufferToScreen(pixelbuffer buffer){
 	int x,y;
 	static int even=0;
 	
-	for (y=even++%2; y<MAX_Y; y+=2){
+	for (y=even++%SKIP; y<MAX_Y; y+=SKIP){
 		for (x=0; x<MAX_X; x++){
 			writePixel(x,y,buffer[x][y]);
 		}
@@ -120,3 +122,47 @@ void drawGamestate(gamestate *gs, pixelbuffer buffer) {
 	}
 	drawShip(&(gs->ship), buffer);
 }
+
+void gameover(pixelbuffer buffer) {
+
+	int x,y;
+	
+	for (y=0; y<MAX_Y; y++) {
+		for(x=0; x<MAX_X; x++) {
+			writePixel(x,y,0x1234);
+		}
+	}
+	drawString(30, 30, "GAMEOVER");
+	
+	
+	int blue = 0x1234;
+	int d;
+	while(blue && !isKeyPressed(2)){
+	for (y=0; y<MAX_Y; y++) {
+		
+		usleep(3000);
+		for(x=0; x<MAX_X; x++) {
+			writePixel(x,y,blue);
+		}
+		blue-=0x100;
+	}
+	}
+	drawString(30,30,"        ");
+}
+	
+	
+
+void drawString(int x, int y, char *str) {
+	while (*str) {
+		drawChar(x,y,*str);
+		x+=2;
+		str++;
+	}
+}
+
+void drawChar(int x,int y,char ch) {
+	volatile short *charbuf_addr=(volatile short*)(CHARBUFFER + (y<<7) + (x));
+	*charbuf_addr=ch;
+}
+	
+

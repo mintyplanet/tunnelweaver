@@ -2,6 +2,8 @@
 #define RENDER_H
 #include "gamestate.h"
 
+#define CHARBUFFER 0x09000000
+
 typedef short pixelbuffer[MAX_X][MAX_Y];
 
 
@@ -25,7 +27,9 @@ void writeBufferToScreen(pixelbuffer buffer);
 
 
 void drawGamestate(gamestate *gs, pixelbuffer buffer);
-
+void gameover(pixelbuffer buffer);
+void drawString(int x, int y, char *str);
+void drawChar(int x,int y,char ch);
 
 
 #endif

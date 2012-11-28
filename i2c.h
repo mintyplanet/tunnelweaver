@@ -40,6 +40,7 @@
 #define A_CS	(1<<3)
 #define A_SDA	(1<<5)
 #define A_SCL	(1<<7)
+#define A_SDO	(1<<9)
 
 #define JP2_ADDR ((volatile char *) 0x10000070)
 #define INIT_I2C() (*(JP2_ADDR)=(INIT))
@@ -47,11 +48,11 @@
 #define SET_BIT(bit) ((*JP2_ADDR) |= (bit))
 #define CLEAR_BIT(bit) ((*JP2_ADDR) &= ~(bit))
 //0xAB
-#define OUTMODE	(A_GND|A_VCC|A_CS|A_SDA|A_SCL)
+#define OUTMODE	(A_GND|A_VCC|A_CS|A_SDA|A_SCL|A_SDO)
 // 0x8B
-#define INMODE	(A_GND|A_VCC|A_CS|A_SCL)
+#define INMODE	(A_GND|A_VCC|A_CS|A_SCL|A_SDO)
 
-#define INIT (A_VCC|A_CS|A_SDA|A_SCL)
+#define INIT (A_VCC|A_CS|A_SDA|A_SCL|A_SDO)
 
 #define SDA_DIR_IN(data_base)	SET_DIRECTION(INMODE)
 #define SDA_DIR_OUT(data_base) 	SET_DIRECTION(OUTMODE) 

@@ -1,8 +1,20 @@
-.include "nios_macros.s"
+/*  .include "nios_macros.s" */
+
+.macro MOVI32 reg, val
+ movhi \reg, %hi(\val)
+ ori \reg, \reg, %lo(\val)
+ .endm
 
 .equ TIMERADDR, 0x10002000 
 
 .global TimerInit
+.global point
+
+.data
+point:
+	.word 0
+
+.text
 
 TimerInit:
 	subi sp, sp, 8
@@ -20,8 +32,8 @@ TimerInit:
 	stwio r17, 4(r16)        /* Start timer and set continue bit high*/
 	movui r17, 0b1             /* enable IRQ line*/
 	wrctl ctl3, r17
-	ldw r17 4(sp)
-	ldw r16 0(sp)
+	ldw r17, 4(sp)
+	ldw r16, 0(sp)
 	addi sp, sp, 8
 ret
 
@@ -33,9 +45,19 @@ Handler:
 	MOVI32 et, TIMERADDR
 
 	stwio r0, 0(et)        /*clear timer*/
-	addi sp, sp, -4
+	addi sp, sp, -8
+	stw r17, 4(sp)
 	stw ra, 0(sp)
-	call TimerHandler        /*Adjust square sizes and send to screen*/
+	
+	/* call TimerHandler */
+	MOVI32 r17, point
+	ldw et, 0(r17)
+	addi et, et, 1
+	stw et, 0(r17)	
 	
 	ldw ra, 0(sp)
-	addi sp, sp, 4
+	ldw r17, 4(sp)
+	addi sp, sp, 8
+	addi ea, ea, -4
+	eret
+	

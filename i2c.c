@@ -36,7 +36,7 @@
 
 
 // Note. Remember to reset device befroe acceess I2C interface
-#define DEBUG_I2C
+//#define DEBUG_I2C
 #ifdef DEBUG_I2C
     #include <stdio.h>
     #define I2C_DEBUG(x)    printf(x) 
